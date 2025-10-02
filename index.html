@@ -93,21 +93,24 @@
           </select>
         </div>
 
-        <!-- نوع الدراسة -->
-        <div class="form-group">
-          <label>نوع الدراسة *</label>
-          <select id="studyType" required>
-            <option value="">اختر نوع الدراسة</option>
-            <option value="بنين">بنين</option>
-            <option value="بنات">بنات</option
-          </select>
-        </div>
-
+    
         <!-- المدرسة -->
         <div class="form-group">
           <label>اسم المدرسة *</label>
           <input type="text" id="schoolName" required placeholder="اختر أو ابحث عن مدرسة">
           <ul id="schoolList" class="dropdown"></ul>
+        </div>
+
+
+         <!-- نوع الدراسة -->
+        <div class="form-group">
+          <label>نوع الدراسة *</label>
+          <select id="studyType" required>
+            <option value="">اختر نوع الدراسة</option>
+            <option value="بنين">بنين</option>
+            <option value="بنات">بنات</option>
+            
+          </select>
         </div>
 
         <!-- الحي -->
@@ -246,12 +249,13 @@ function setLocation(successMsg, errorMsg) {
       latitude.value = pos.coords.latitude;
       longitude.value = pos.coords.longitude;
       document.getElementById("locationStatus").innerHTML =
-        successMsg + " <br>  دقة: " + pos.coords.accuracy.toFixed(1) + " متر";
+        successMsg + " <br> دقة: " + pos.coords.accuracy.toFixed(1) + " متر";
     },
     err => {
       let msg = "⚠️ فشل تحديد الموقع";
       if (err.code === 1) msg = "⚠️ تم رفض إذن الموقع من المتصفح";
-     
+      else if (err.code === 2) msg = "⚠️ الموقع غير متاح حالياً";
+      else if (err.code === 3) msg = "⚠️ انتهى وقت المحاولة، حاول مرة أخرى";
       document.getElementById("locationStatus").innerHTML = errorMsg + "<br>" + msg;
     },
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
