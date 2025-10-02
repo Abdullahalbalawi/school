@@ -98,9 +98,8 @@
           <label>نوع الدراسة *</label>
           <select id="studyType" required>
             <option value="">اختر نوع الدراسة</option>
-            <option value="منتظم">منتظم</option>
-            <option value="انتساب">انتساب</option>
-            <option value="تعليم عن بعد">تعليم عن بعد</option>
+            <option value="بنين">بنين</option>
+            <option value="بنات">بنات</option
           </select>
         </div>
 
@@ -119,7 +118,7 @@
         </div>
 
         <div class="form-group">
-          <label>📍 الموقع الحالي *</label>
+          <label> الموقع الحالي *</label>
           <button type="button" class="location-btn" id="getLocationBtn">تحديد الموقع الحالي</button>
           <div id="locationStatus"></div>
           <input type="hidden" id="latitude">
@@ -131,7 +130,7 @@
     </div>
 
     <div class="success-message" id="successMessage">
-      <div class="success-icon">✅</div>
+      <div class="success-icon"></div>
       <h2>تم التسجيل بنجاح!</h2>
       <a href="#" id="whatsappBtn" target="_blank" class="wa-icon">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب">
@@ -247,13 +246,12 @@ function setLocation(successMsg, errorMsg) {
       latitude.value = pos.coords.latitude;
       longitude.value = pos.coords.longitude;
       document.getElementById("locationStatus").innerHTML =
-        successMsg + " <br> 📍 دقة: " + pos.coords.accuracy.toFixed(1) + " متر";
+        successMsg + " <br>  دقة: " + pos.coords.accuracy.toFixed(1) + " متر";
     },
     err => {
       let msg = "⚠️ فشل تحديد الموقع";
       if (err.code === 1) msg = "⚠️ تم رفض إذن الموقع من المتصفح";
-      else if (err.code === 2) msg = "⚠️ الموقع غير متاح حالياً";
-      else if (err.code === 3) msg = "⚠️ انتهى وقت المحاولة، حاول مرة أخرى";
+     
       document.getElementById("locationStatus").innerHTML = errorMsg + "<br>" + msg;
     },
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
