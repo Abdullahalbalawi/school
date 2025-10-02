@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل النقل المدرسي</title>
+  <style>
+    * {margin:0;padding:0;box-sizing:border-box;}
+    body {font-family:'Segoe UI',Tahoma,sans-serif;
+          background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+          min-height:100vh;padding:20px;direction:rtl;}
+    .container {max-width:600px;margin:0 auto;background:white;
+          border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;}
+    .header {background:linear-gradient(135deg,#4285F4,#34A853);color:white;padding:30px;text-align:center;}
+    .header h1 {font-size:28px;margin-bottom:10px;}
+    .header p {font-size:14px;opacity:0.9;}
+    .form-container {padding:30px;}
+    .form-group {margin-bottom:20px;position:relative;}
+    label {display:block;margin-bottom:8px;color:#333;font-weight:600;font-size:14px;}
+    input,select {width:100%;padding:12px 15px;border:2px solid #e0e0e0;border-radius:10px;
+          font-size:15px;transition:all 0.3s ease;font-family:inherit;}
+    input:focus,select:focus {outline:none;border-color:#4285F4;
+          box-shadow:0 0 0 3px rgba(66,133,244,0.1);}
+    .location-btn {width:100%;padding:12px;background:#34A853;color:white;border:none;
+          border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;}
+    .submit-btn {width:100%;padding:15px;background:linear-gradient(135deg,#667eea,#764ba2);
+          color:white;border:none;border-radius:10px;font-size:18px;font-weight:600;cursor:pointer;}
+    .submit-btn:hover {opacity:0.9;}
+    .success-message {display:none;text-align:center;padding:30px;}
+    .success-message.active {display:block;}
+    .success-icon {font-size:60px;color:#34A853;margin-bottom:20px;}
+    /* أيقونة واتساب */
+    .wa-icon img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #25D366;
+      padding: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+    .wa-icon img:hover { transform: scale(1.1); }
+    /* القوائم المرنة */
+    .dropdown {
+      list-style:none;
+      margin:5px 0 0;
+      padding:0;
+      border:1px solid #ccc;
+      border-radius:6px;
+      max-height:150px;
+      overflow-y:auto;
+      background:#fff;
+      display:none;
+      position:absolute;
+      width:100%;
+      z-index:999;
+    }
+    .dropdown li {
+      padding:8px 10px;
+      cursor:pointer;
+    }
+    .dropdown li:hover { background:#f0f0f0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>تسجيل النقل المدرسي</h1>
+      <p>يرجى تعبئة جميع البيانات المطلوبة</p>
+    </div>
+
+    <div class="form-container" id="formContainer">
+      <form id="registrationForm">
+        <div class="form-group">
+          <label>اسم الطالب/ـة *</label>
+          <input type="text" id="studentName" required placeholder="أدخل اسم الطالب/ـة الكامل">
+        </div>
+        <div class="form-group">
+          <label>سجل الطالب/ـة *</label>
+          <input type="text" id="studentId" required placeholder="أدخل رقم السجل المدني">
+        </div>
+        <div class="form-group">
+          <label>رقم التواصل *</label>
+          <input type="tel" id="contactNumber" required placeholder="05xxxxxxxx">
+        </div>
+        <div class="form-group">
+          <label>المرحلة *</label>
+          <select id="stage" required>
+            <option value="">اختر المرحلة</option>
+            <option value="ابتدائي">ابتدائي</option>
+            <option value="متوسط">متوسط</option>
+            <option value="ثانوي">ثانوي</option>
+          </select>
+        </div>
+
+        <!-- نوع الدراسة -->
+        <div class="form-group">
+          <label>نوع الدراسة *</label>
+          <select id="studyType" required>
+            <option value="">اختر نوع الدراسة</option>
+            <option value="منتظم">منتظم</option>
+            <option value="انتساب">انتساب</option>
+            <option value="تعليم عن بعد">تعليم عن بعد</option>
+          </select>
+        </div>
+
+        <!-- المدرسة -->
+        <div class="form-group">
+          <label>اسم المدرسة *</label>
+          <input type="text" id="schoolName" required placeholder="اختر أو ابحث عن مدرسة">
+          <ul id="schoolList" class="dropdown"></ul>
+        </div>
+
+        <!-- الحي -->
+        <div class="form-group">
+          <label>الحي *</label>
+          <input type="text" id="neighborhood" required placeholder="اختر أو ابحث عن حي">
+          <ul id="neighList" class="dropdown"></ul>
+        </div>
+
+        <div class="form-group">
+          <label>📍 الموقع الحالي *</label>
+          <button type="button" class="location-btn" id="getLocationBtn">تحديد الموقع الحالي</button>
+          <div id="locationStatus"></div>
+          <input type="hidden" id="latitude">
+          <input type="hidden" id="longitude">
+        </div>
+
+        <button type="submit" class="submit-btn">إرسال التسجيل</button>
+      </form>
+    </div>
+
+    <div class="success-message" id="successMessage">
+      <div class="success-icon">✅</div>
+      <h2>تم التسجيل بنجاح!</h2>
+      <a href="#" id="whatsappBtn" target="_blank" class="wa-icon">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب">
+      </a>
+    </div>
+  </div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxY48XwSX3R1_KwZNDK2EFykszZ-9TrlJ16APUOqH0n-g_h2a4SAWptF50vvgHPDR8Frg/exec";
+
+// قائمة مرنة
+function setupSearchable(inputId, listId, items, placeholderNew) {
+  const input = document.getElementById(inputId);
+  const list = document.getElementById(listId);
+
+  input.addEventListener("focus", function() {
+    renderList(items, input, list, placeholderNew);
+    list.style.display = "block";
+  });
+  input.addEventListener("input", function() {
+    const val = this.value.toLowerCase();
+    const filtered = items.filter(x => x.toLowerCase().includes(val));
+    renderList(filtered, input, list, placeholderNew);
+    list.style.display = "block";
+  });
+  document.addEventListener("click", e => {
+    if (!list.contains(e.target) && e.target !== input) {
+      list.style.display = "none";
+    }
+  });
+}
+function renderList(arr, input, list, placeholderNew) {
+  list.innerHTML = "";
+  arr.forEach(txt => {
+    const li = document.createElement("li");
+    li.textContent = txt;
+    li.addEventListener("click", () => {
+      input.value = txt;
+      list.style.display = "none";
+    });
+    list.appendChild(li);
+  });
+  const addNew = document.createElement("li");
+  addNew.textContent = "➕ أدخل جديد...";
+  addNew.addEventListener("click", () => {
+    const newVal = prompt("أدخل " + placeholderNew + " جديد:");
+    if (newVal && newVal.trim() !== "") {
+      input.value = newVal.trim();
+      list.style.display = "none";
+    }
+  });
+  list.appendChild(addNew);
+}
+
+// تحميل البيانات
+fetch(API_URL + "?action=getSchools")
+  .then(r => r.json())
+  .then(schools => setupSearchable("schoolName", "schoolList", schools, "اسم المدرسة"));
+fetch(API_URL + "?action=getNeighborhoods")
+  .then(r => r.json())
+  .then(neighs => setupSearchable("neighborhood", "neighList", neighs, "اسم الحي"));
+
+// تحقق وإرسال
+document.getElementById("registrationForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const nameVal = studentName.value.trim();
+  const nameParts = nameVal.split(" ").filter(p => p !== "");
+  if (nameParts.length < 4) { alert("⚠️ يجب إدخال الاسم رباعي."); studentName.focus(); return; }
+
+  const idVal = studentId.value.trim();
+  if (!/^[0-9]{10}$/.test(idVal)) { alert("⚠️ رقم السجل يجب أن يتكون من 10 أرقام."); studentId.focus(); return; }
+
+  const phoneVal = contactNumber.value.trim();
+  if (!/^05[0-9]{8}$/.test(phoneVal)) { alert("⚠️ رقم الجوال يجب أن يبدأ بـ 05 ويكون 10 أرقام."); contactNumber.focus(); return; }
+
+  if (!stage.value || !studyType.value || !schoolName.value || !neighborhood.value) {
+    alert("⚠️ الرجاء تعبئة جميع الحقول المطلوبة."); return;
+  }
+
+  if (!latitude.value || !longitude.value) {
+    alert("⚠️ يجب تحديد الموقع قبل إرسال النموذج."); return;
+  }
+
+  const data = {
+    studentName: nameVal,
+    studentId: idVal,
+    contactNumber: phoneVal,
+    stage: stage.value,
+    studyType: studyType.value,
+    schoolName: schoolName.value,
+    neighborhood: neighborhood.value,
+    latitude: latitude.value,
+    longitude: longitude.value
+  };
+
+  fetch(API_URL, {method: "POST", body: JSON.stringify(data)})
+    .then(r => r.json())
+    .then(res => {
+      if (res.success) {
+        document.getElementById("successMessage").classList.add("active");
+        document.getElementById("whatsappBtn").href = res.whatsappLink;
+        document.getElementById("formContainer").style.display = "none";
+      } else { alert("خطأ: " + res.message); }
+    })
+    .catch(err => alert("خطأ: " + err));
+});
+
+// تحديد الموقع بدقة عالية
+function setLocation(successMsg, errorMsg) {
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      latitude.value = pos.coords.latitude;
+      longitude.value = pos.coords.longitude;
+      document.getElementById("locationStatus").innerHTML =
+        successMsg + " <br> 📍 دقة: " + pos.coords.accuracy.toFixed(1) + " متر";
+    },
+    err => {
+      let msg = "⚠️ فشل تحديد الموقع";
+      if (err.code === 1) msg = "⚠️ تم رفض إذن الموقع من المتصفح";
+      else if (err.code === 2) msg = "⚠️ الموقع غير متاح حالياً";
+      else if (err.code === 3) msg = "⚠️ انتهى وقت المحاولة، حاول مرة أخرى";
+      document.getElementById("locationStatus").innerHTML = errorMsg + "<br>" + msg;
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
+}
+
+document.getElementById("getLocationBtn").addEventListener("click", () => {
+  if (navigator.geolocation) setLocation("✓ تم تحديد الموقع يدويًا", "⚠️ لم يتم تحديد الموقع");
+});
+
+window.onload = () => {
+  if (navigator.geolocation) setLocation("✓ تم تحديد الموقع تلقائيًا", "⚠️ الرجاء الضغط على زر تحديد الموقع");
+}
+</script>
+</body>
+</html>
